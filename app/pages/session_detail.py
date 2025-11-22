@@ -1,9 +1,13 @@
 import reflex as rx
 from app.states.class_state import ClassState
+from app.states.attendance_state import AttendanceState
+from app.states.auth_state import AuthState
 from app.components.sidebar import sidebar, mobile_header
+from app.pages.auth import login_page
 
 
 def session_detail_page() -> rx.Component:
+    current_records = AttendanceState.current_session_records
     return rx.el.div(
         sidebar(),
         rx.el.div(
@@ -122,9 +126,46 @@ def session_detail_page() -> rx.Component:
                                                 class_name="text-center p-6 bg-teal-50 rounded-xl mb-6",
                                             ),
                                             rx.el.div(
-                                                rx.el.p(
-                                                    "Scanning in progress...",
-                                                    class_name="text-center text-gray-400 text-sm italic",
+                                                rx.cond(
+                                                    current_records.length() > 0,
+                                                    rx.el.div(
+                                                        rx.foreach(
+                                                            current_records,
+                                                            lambda r: rx.el.div(
+                                                                rx.el.div(
+                                                                    rx.el.div(
+                                                                        r[
+                                                                            "student_name"
+                                                                        ][0],
+                                                                        class_name="w-8 h-8 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-sm mr-3",
+                                                                    ),
+                                                                    rx.el.div(
+                                                                        rx.el.p(
+                                                                            r[
+                                                                                "student_name"
+                                                                            ],
+                                                                            class_name="font-medium text-gray-800 text-sm",
+                                                                        ),
+                                                                        rx.el.p(
+                                                                            f"Checked in at {r['timestamp']}",
+                                                                            class_name="text-xs text-gray-500",
+                                                                        ),
+                                                                    ),
+                                                                    class_name="flex items-center",
+                                                                ),
+                                                                rx.icon(
+                                                                    "square_check",
+                                                                    class_name="w-4 h-4 text-green-500",
+                                                                ),
+                                                                class_name="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors",
+                                                            ),
+                                                        ),
+                                                        class_name="space-y-1 max-h-[400px] overflow-y-auto pr-2",
+                                                    ),
+                                                    rx.el.p(
+                                                        "No attendance recorded yet.",
+                                                        class_name="text-center text-gray-400 text-sm italic py-4",
+                                                    ),
                                                 ),
                                                 class_name="border-t border-gray-100 pt-6",
                                             ),

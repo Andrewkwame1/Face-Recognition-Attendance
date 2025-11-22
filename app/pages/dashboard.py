@@ -2,6 +2,7 @@ import reflex as rx
 from app.states.auth_state import AuthState
 from app.states.class_state import ClassState
 from app.components.sidebar import sidebar, mobile_header
+from app.pages.auth import login_page
 
 
 def stat_card(title: str, value: str, icon: str, color_class: str) -> rx.Component:
@@ -212,30 +213,34 @@ def student_dashboard() -> rx.Component:
 
 
 def dashboard() -> rx.Component:
-    return rx.el.div(
-        sidebar(),
+    return rx.cond(
+        AuthState.is_authenticated,
         rx.el.div(
-            mobile_header(),
-            rx.el.main(
-                rx.el.div(
-                    rx.el.h2(
-                        f"Welcome back, {AuthState.user_name.split(' ')[0]}!",
-                        class_name="text-3xl font-bold text-gray-800 mb-2 font-['Lora']",
+            sidebar(),
+            rx.el.div(
+                mobile_header(),
+                rx.el.main(
+                    rx.el.div(
+                        rx.el.h2(
+                            f"Welcome back, {AuthState.user_name.split(' ')[0]}!",
+                            class_name="text-3xl font-bold text-gray-800 mb-2 font-['Lora']",
+                        ),
+                        rx.el.p(
+                            "Here's what's happening today.",
+                            class_name="text-gray-500 mb-8",
+                        ),
+                        rx.cond(
+                            AuthState.user_role == "teacher",
+                            teacher_dashboard(),
+                            student_dashboard(),
+                        ),
+                        class_name="max-w-6xl mx-auto",
                     ),
-                    rx.el.p(
-                        "Here's what's happening today.",
-                        class_name="text-gray-500 mb-8",
-                    ),
-                    rx.cond(
-                        AuthState.user_role == "teacher",
-                        teacher_dashboard(),
-                        student_dashboard(),
-                    ),
-                    class_name="max-w-6xl mx-auto",
+                    class_name="flex-1 p-6 md:p-10 md:ml-64 min-h-screen bg-gray-50/50",
                 ),
-                class_name="flex-1 p-6 md:p-10 md:ml-64 min-h-screen bg-gray-50/50",
+                class_name="flex-1 flex flex-col min-h-screen",
             ),
-            class_name="flex-1 flex flex-col min-h-screen",
+            class_name="flex min-h-screen font-['Lora']",
         ),
-        class_name="flex min-h-screen font-['Lora']",
+        login_page(),
     )

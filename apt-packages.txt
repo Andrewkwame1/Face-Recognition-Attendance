@@ -1,0 +1,6 @@
+cmake
+build-essential
+pkg-config
+libglib2.0-0
+libgl1-mesa-glx
+cmake build-essential pkg-config libglib2.0-0

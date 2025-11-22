@@ -1,5 +1,9 @@
-reflex==0.8.20
-qrcode
+numpy
+reflex
 pillow
-face-recognition
 opencv-python-headless
+opencv-python
+qrcode
+face-recognition
+dlib
+cmake

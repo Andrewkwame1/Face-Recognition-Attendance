@@ -3,21 +3,10 @@ from app.pages.auth import login_page, register_page
 from app.pages.dashboard import dashboard
 from app.pages.class_detail import class_detail_page
 from app.pages.session_detail import session_detail_page
+from app.pages.attendance import attendance_page
 from app.states.auth_state import AuthState
 from app.states.class_state import ClassState
-
-
-def index() -> rx.Component:
-    return rx.cond(AuthState.is_authenticated, dashboard(), login_page())
-
-
-def class_detail() -> rx.Component:
-    return rx.cond(AuthState.is_authenticated, class_detail_page(), login_page())
-
-
-def session_detail() -> rx.Component:
-    return rx.cond(AuthState.is_authenticated, session_detail_page(), login_page())
-
+from app.states.attendance_state import AttendanceState
 
 app = rx.App(
     theme=rx.theme(appearance="light"),
@@ -30,16 +19,19 @@ app = rx.App(
         ),
     ],
 )
-app.add_page(index, route="/")
+app.add_page(dashboard, route="/")
 app.add_page(login_page, route="/login")
 app.add_page(register_page, route="/register")
 app.add_page(
-    class_detail,
-    route="/classes/[class_id]",
-    on_load=ClassState.set_current_class(rx.State.router.page.params["class_id"]),
+    class_detail_page, route="/classes/[class_id]", on_load=ClassState.load_class_detail
 )
 app.add_page(
-    session_detail,
+    session_detail_page,
     route="/sessions/[session_id]",
-    on_load=ClassState.set_current_session(rx.State.router.page.params["session_id"]),
+    on_load=ClassState.load_session_detail,
+)
+app.add_page(
+    attendance_page,
+    route="/attend/[session_id]",
+    on_load=AttendanceState.load_checkin_session_from_params,
 )

@@ -1,4 +1,5 @@
 import reflex as rx
+import uuid
 from typing import TypedDict, Optional
 
 
@@ -78,8 +79,6 @@ class AuthState(rx.State):
         if any((u["email"] == self.register_email for u in self.users)):
             self.error_message = "Email already exists."
             return
-        import uuid
-
         new_user: User = {
             "id": str(uuid.uuid4()),
             "name": self.register_name,

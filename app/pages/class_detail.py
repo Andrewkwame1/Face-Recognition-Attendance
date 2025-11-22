@@ -1,6 +1,8 @@
 import reflex as rx
 from app.states.class_state import ClassState
+from app.states.auth_state import AuthState
 from app.components.sidebar import sidebar, mobile_header
+from app.pages.auth import login_page
 
 
 def class_detail_page() -> rx.Component:
@@ -121,7 +123,13 @@ def class_detail_page() -> rx.Component:
                                                         class_name="font-bold text-gray-800 text-sm",
                                                     ),
                                                     rx.el.div(
-                                                        class_name=f"h-1.5 rounded-full bg-teal-500 mt-1 w-16 opacity-{student['attendance_rate']}"
+                                                        class_name="h-1.5 rounded-full bg-teal-500 mt-1 w-16",
+                                                        style={
+                                                            "opacity": student[
+                                                                "attendance_rate"
+                                                            ]
+                                                            / 100
+                                                        },
                                                     ),
                                                     class_name="text-right",
                                                 ),

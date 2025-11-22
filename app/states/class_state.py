@@ -1,5 +1,7 @@
 import reflex as rx
 import logging
+import uuid
+import datetime
 from typing import TypedDict
 from app.states.auth_state import AuthState
 from app.utils.qr import generate_qr_code
@@ -66,6 +68,11 @@ class ClassState(rx.State):
             "time": "10:00 AM",
             "status": "completed",
             "attendee_count": 24,
+            "latitude": 37.7749,
+            "longitude": -122.4194,
+            "radius": 100,
+            "qr_code": generate_qr_code("http://localhost:3000/attend/s1"),
+            "link": "http://localhost:3000/attend/s1",
         },
         {
             "id": "s2",
@@ -74,6 +81,11 @@ class ClassState(rx.State):
             "time": "10:00 AM",
             "status": "active",
             "attendee_count": 12,
+            "latitude": 37.7749,
+            "longitude": -122.4194,
+            "radius": 100,
+            "qr_code": generate_qr_code("http://localhost:3000/attend/s2"),
+            "link": "http://localhost:3000/attend/s2",
         },
         {
             "id": "s3",
@@ -82,6 +94,11 @@ class ClassState(rx.State):
             "time": "02:00 PM",
             "status": "completed",
             "attendee_count": 18,
+            "latitude": 37.7749,
+            "longitude": -122.4194,
+            "radius": 100,
+            "qr_code": generate_qr_code("http://localhost:3000/attend/s3"),
+            "link": "http://localhost:3000/attend/s3",
         },
     ]
     student_roster: list[StudentRosterItem] = [
@@ -100,7 +117,6 @@ class ClassState(rx.State):
 
     @rx.var
     async def teacher_classes(self) -> list[ClassItem]:
-        current_user = await self.get_state(AuthState)
         return self.classes
 
     @rx.var
@@ -134,9 +150,19 @@ class ClassState(rx.State):
         self.current_session_id = session_id
 
     @rx.event
-    async def create_class(self, form_data: dict):
-        import uuid
+    def load_class_detail(self):
+        class_id = self.router.page.params.get("class_id", "")
+        logging.info(f"Loading class detail. Route param class_id: {class_id}")
+        self.current_class_id = class_id
 
+    @rx.event
+    def load_session_detail(self):
+        session_id = self.router.page.params.get("session_id", "")
+        logging.info(f"Loading session detail. Route param session_id: {session_id}")
+        self.current_session_id = session_id
+
+    @rx.event
+    async def create_class(self, form_data: dict):
         auth_state = await self.get_state(AuthState)
         new_class: ClassItem = {
             "id": str(uuid.uuid4()),
@@ -165,9 +191,6 @@ class ClassState(rx.State):
 
     @rx.event
     def create_session(self):
-        import uuid
-        import datetime
-
         session_id = str(uuid.uuid4())
         link = f"http://localhost:3000/attend/{session_id}"
         qr_code = generate_qr_code(link)
