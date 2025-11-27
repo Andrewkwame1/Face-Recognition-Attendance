@@ -2,7 +2,6 @@ import reflex as rx
 from app.states.attendance_state import AttendanceState
 from app.states.auth_state import AuthState
 from app.states.class_state import ClassState
-from app.pages.auth import login_page
 
 
 def attendance_page() -> rx.Component:

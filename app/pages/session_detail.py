@@ -3,7 +3,6 @@ from app.states.class_state import ClassState
 from app.states.attendance_state import AttendanceState
 from app.states.auth_state import AuthState
 from app.components.sidebar import sidebar, mobile_header
-from app.pages.auth import login_page
 
 
 def session_detail_page() -> rx.Component:

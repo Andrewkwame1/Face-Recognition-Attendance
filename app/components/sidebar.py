@@ -52,34 +52,46 @@ def sidebar() -> rx.Component:
                 ),
                 class_name="flex-1 px-2",
             ),
-            rx.el.div(
+            rx.cond(
+                AuthState.is_authenticated,
                 rx.el.div(
                     rx.el.div(
-                        rx.icon("user_pen", class_name="w-10 h-10 text-gray-400"),
                         rx.el.div(
-                            rx.el.p(
-                                AuthState.user_name,
-                                class_name="text-sm font-bold text-gray-800 truncate",
+                            rx.icon("user_pen", class_name="w-10 h-10 text-gray-400"),
+                            rx.el.div(
+                                rx.el.p(
+                                    AuthState.user_name,
+                                    class_name="text-sm font-bold text-gray-800 truncate",
+                                ),
+                                rx.el.p(
+                                    AuthState.user_role.capitalize(),
+                                    class_name="text-xs text-gray-500",
+                                ),
+                                class_name="ml-3 overflow-hidden",
                             ),
-                            rx.el.p(
-                                AuthState.user_role.capitalize(),
-                                class_name="text-xs text-gray-500",
+                            class_name="flex items-center",
+                        ),
+                        rx.el.button(
+                            rx.icon(
+                                "log-out",
+                                class_name="w-5 h-5 text-gray-500 hover:text-red-500 transition-colors",
                             ),
-                            class_name="ml-3 overflow-hidden",
+                            on_click=AuthState.logout,
+                            class_name="ml-auto p-2 rounded-full hover:bg-gray-100",
                         ),
-                        class_name="flex items-center",
+                        class_name="flex items-center justify-between w-full",
                     ),
-                    rx.el.button(
-                        rx.icon(
-                            "log-out",
-                            class_name="w-5 h-5 text-gray-500 hover:text-red-500 transition-colors",
-                        ),
-                        on_click=AuthState.logout,
-                        class_name="ml-auto p-2 rounded-full hover:bg-gray-100",
-                    ),
-                    class_name="flex items-center justify-between w-full",
+                    class_name="p-4 border-t border-gray-100 mt-auto bg-gray-50/50",
                 ),
-                class_name="p-4 border-t border-gray-100 mt-auto bg-gray-50/50",
+                rx.el.a(
+                    rx.el.div(
+                        rx.icon("log-in", class_name="w-5 h-5 mr-2 text-teal-600"),
+                        rx.el.span("Sign In", class_name="font-bold text-teal-600"),
+                        class_name="flex items-center justify-center",
+                    ),
+                    href="/login",
+                    class_name="p-4 border-t border-gray-100 mt-auto bg-gray-50/50 hover:bg-teal-50 transition-colors block",
+                ),
             ),
             class_name="flex flex-col h-full",
         ),
@@ -94,9 +106,15 @@ def mobile_header() -> rx.Component:
             rx.el.span("Attendify", class_name="font-bold text-lg text-gray-800"),
             class_name="flex items-center",
         ),
-        rx.el.button(
-            rx.icon("log-out", class_name="w-5 h-5 text-gray-600"),
-            on_click=AuthState.logout,
+        rx.cond(
+            AuthState.is_authenticated,
+            rx.el.button(
+                rx.icon("log-out", class_name="w-5 h-5 text-gray-600"),
+                on_click=AuthState.logout,
+            ),
+            rx.el.a(
+                rx.icon("log-in", class_name="w-5 h-5 text-teal-600"), href="/login"
+            ),
         ),
         class_name="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200 sticky top-0 z-20",
     )

@@ -8,7 +8,7 @@ try:
 
     HAS_FACE_LIB = True
 except ImportError as e:
-    logging.exception(
+    logging.warning(
         f"face_recognition or opencv-python-headless not installed. Face verification will be mocked. Error: {e}"
     )
     HAS_FACE_LIB = False
